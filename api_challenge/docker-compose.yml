@@ -1,0 +1,32 @@
+version: "3.9"
+   
+services:
+  db:
+    image: keinos/sqlite3:latest
+    environment:
+      - SQLITE3_DB=db.sqlite3
+    volumes:
+      - db_data:/data
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - web_code:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  migration:
+    build: .
+    command: python manage.py migrate
+    volumes:
+      - migration_code:/code
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+  web_code:
+  migration_code:
